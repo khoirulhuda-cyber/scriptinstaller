@@ -8,12 +8,15 @@ clear
 # Fungsi untuk tampilan seperti Winfetch
 function show_info() {
     echo -e "\e[1;36m"
-    echo "       ___       __         __         "
-    echo "  ____/ (_)___  / /_  ___  / /__  _____ "
-    echo " / __  / / __ \/ __ \/ _ \/ / _ \/ ___/ "
-    echo "/ /_/ / / /_/ / / / /  __/ /  __(__  )  "
-    echo "\__,_/_/ .___/_/ /_/\___/_/\___/____/   "
-    echo "       /_/                              "
+echo " /$$$$$$$            /$$                    "
+echo "| $$__  $$          | $$                    "
+echo "| $$  \ $$ /$$   /$$| $$ /$$$$$$$$ /$$   /$$"
+echo "| $$$$$$$/| $$  | $$| $$|____ /$$/|  $$ /$$/"
+echo "| $$__  $$| $$  | $$| $$   /$$$$/  \  $$$$/ "
+echo "| $$  \ $$| $$  | $$| $$  /$$__/    >$$  $$ "
+echo "| $$  | $$|  $$$$$$/| $$ /$$$$$$$$ /$$/\  $$"
+echo "|__/  |__/ \______/ |__/|________/|__/  \__/"
+
     echo -e "\e[0m"
     echo -e "🖥️  Hostname   : \e[1;33m$(hostname)\e[0m"
     echo -e "📦 Distro     : \e[1;33m$(lsb_release -ds)\e[0m"
@@ -71,6 +74,26 @@ function install_immich() {
     echo -e "📝 File: docker-compose.yml & .env"
 }
 
+# Fungsi untuk install PHP 8.4 + Composer + Laravel
+function install_laravel() {
+    echo -e "\n\e[1;34m[🐘] Menginstall PHP 8.4, Composer, dan Laravel...\e[0m"
+    /bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
+
+    echo -e "\n\e[1;32m✅ PHP & Composer berhasil diinstal!\e[0m"
+    php -v
+    composer -V
+
+    echo -e "\n\e[1;34m⬇️  Menginstal Laravel installer...\e[0m"
+    composer global require laravel/installer
+
+    echo -e "\n\e[1;32m✅ Laravel installer berhasil diinstal!\e[0m"
+    echo -e "Gunakan perintah berikut untuk membuat project Laravel baru:"
+    echo -e "  \e[1;33mlaravel new example-app\e[0m"
+    echo -e "  \e[1;33mcd example-app\e[0m"
+    echo -e "  \e[1;33mnpm install && npm run build\e[0m"
+    echo -e "  \e[1;33mcomposer run dev\e[0m"
+}
+
 # Show info
 show_info
 
@@ -78,7 +101,8 @@ show_info
 echo -e "\n\e[1;35mSilakan pilih opsi:\e[0m"
 echo -e "1) Install Docker"
 echo -e "2) Install Immich"
-read -p $'\nPilih opsi (1/2): ' opt
+echo -e "3) Install PHP 8.4 + Composer + Laravel"
+read -p $'\nPilih opsi (1/2/3): ' opt
 
 case $opt in
   1)
@@ -86,6 +110,9 @@ case $opt in
     ;;
   2)
     install_immich
+    ;;
+  3)
+    install_laravel
     ;;
   *)
     echo -e "\n\e[1;31mOpsi tidak valid!\e[0m"
