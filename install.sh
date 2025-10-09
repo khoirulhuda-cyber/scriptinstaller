@@ -16,8 +16,7 @@ echo "| $$__  $$| $$  | $$| $$   /$$$$/  \  $$$$/ "
 echo "| $$  \ $$| $$  | $$| $$  /$$__/    >$$  $$ "
 echo "| $$  | $$|  $$$$$$/| $$ /$$$$$$$$ /$$/\  $$"
 echo "|__/  |__/ \______/ |__/|________/|__/  \__/"
-
-    echo -e "\e[0m"
+echo -e "\e[0m"
     echo -e "🖥️  Hostname   : \e[1;33m$(hostname)\e[0m"
     echo -e "📦 Distro     : \e[1;33m$(lsb_release -ds)\e[0m"
     echo -e "🧠 Kernel     : \e[1;33m$(uname -r)\e[0m"
@@ -42,7 +41,6 @@ function install_docker() {
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     sudo apt-get update
-
     echo -e "\n\e[1;34m[📦] Menginstall Docker...\e[0m"
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
@@ -94,6 +92,40 @@ function install_laravel() {
     echo -e "  \e[1;33mcomposer run dev\e[0m"
 }
 
+# Fungsi untuk setup RDP CLI-only + XFCE GUI
+function setup_rdp() {
+    echo -e "\n\e[1;34m[🖥️] Mengatur Ubuntu agar boot ke CLI dan GUI hanya muncul di RDP...\e[0m"
+
+    # Update sistem
+    sudo apt update && sudo apt upgrade -y
+
+    # Install XFCE + XRDP
+    echo -e "\n\e[1;34m📦 Menginstal XFCE dan XRDP...\e[0m"
+    sudo apt install -y xfce4 xfce4-goodies xrdp
+
+    # Set XFCE sebagai default session
+    echo xfce4-session > ~/.xsession
+
+    # Modifikasi startwm.sh
+    sudo sed -i '/^test -x/ i\unset DBUS_SESSION_BUS_ADDRESS\nunset XDG_RUNTIME_DIR\nstartxfce4' /etc/xrdp/startwm.sh
+
+    # Enable dan start xrdp
+    sudo systemctl enable xrdp
+    sudo systemctl restart xrdp
+
+    # Izinkan port 3389
+    sudo ufw allow 3389/tcp
+
+    # Set agar boot ke CLI
+    sudo systemctl set-default multi-user.target
+
+    echo -e "\n\e[1;32m✅ Setup selesai!\e[0m"
+    echo -e "💡 Sistem akan boot ke CLI (tanpa GUI)"
+    echo -e "💻 Akses GUI via RDP dari Windows:"
+    echo -e "  IP: \e[1;33m$(hostname -I | awk '{print $1}')\e[0m Port: \e[1;33m3389\e[0m"
+    echo -e "🪟 Gunakan Remote Desktop (mstsc.exe) untuk login XFCE GUI!"
+}
+
 # Show info
 show_info
 
@@ -102,7 +134,8 @@ echo -e "\n\e[1;35mSilakan pilih opsi:\e[0m"
 echo -e "1) Install Docker"
 echo -e "2) Install Immich"
 echo -e "3) Install PHP 8.4 + Composer + Laravel"
-read -p $'\nPilih opsi (1/2/3): ' opt
+echo -e "4) Setup Ubuntu sebagai RDP Server (CLI only + XFCE via RDP)"
+read -p $'\nPilih opsi (1/2/3/4): ' opt
 
 case $opt in
   1)
@@ -113,6 +146,9 @@ case $opt in
     ;;
   3)
     install_laravel
+    ;;
+  4)
+    setup_rdp
     ;;
   *)
     echo -e "\n\e[1;31mOpsi tidak valid!\e[0m"
