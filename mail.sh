@@ -790,18 +790,7 @@ EOF
 
 set_permissions() {
     print_step "Setting permissions..."
-    
 
-    # Set directory permissions
-    sudo find "$PANEL_DIR" -type d -exec chmod 755 {} \;
-    
-    # Set file permissions
-    sudo find "$PANEL_DIR" -type f -exec chmod 644 {} \;
-    
-    # Make storage writable
-    sudo chmod -R 775 "$PANEL_DIR/storage"
-    sudo chmod -R 775 "$PANEL_DIR/bootstrap/cache"
-    
     print_success "Permissions set"
 }
 
