@@ -791,9 +791,7 @@ EOF
 set_permissions() {
     print_step "Setting permissions..."
     
-    # Set ownership
-    sudo chown -R $USER:$USER "$PANEL_DIR"
-    
+
     # Set directory permissions
     sudo find "$PANEL_DIR" -type d -exec chmod 755 {} \;
     
